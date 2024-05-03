@@ -28,22 +28,18 @@ func GenerateRandomKey(length int) string {
 func ReadCSV(filename string) ([]models.Book, error) {
 	var books []models.Book
 
-	// Open the CSV file
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	// Create a new CSV reader
 	reader := csv.NewReader(file)
 
-	// Skip the first row (header row)
 	if _, err := reader.Read(); err != nil {
 		return nil, err
 	}
 
-	// Read the CSV records
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
@@ -53,7 +49,6 @@ func ReadCSV(filename string) ([]models.Book, error) {
 			return nil, err
 		}
 
-		// Validate and parse the publication year
 		publicationYearStr := record[2]
 		if publicationYearStr == "" {
 			return nil, errors.New("publication year is empty")
@@ -63,7 +58,6 @@ func ReadCSV(filename string) ([]models.Book, error) {
 			return nil, fmt.Errorf("invalid publication year format: %v", err)
 		}
 
-		// Create a Book object and append to the list
 		book := models.Book{
 			Name:            record[0],
 			Author:          record[1],
@@ -77,7 +71,6 @@ func ReadCSV(filename string) ([]models.Book, error) {
 
 func ParseAndValidateToken(tokenString string) (*models.Claims, bool) {
 
-	// Parse and validate the JWT token
 	claims := &models.Claims{}
 	jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return token, nil
@@ -85,17 +78,3 @@ func ParseAndValidateToken(tokenString string) (*models.Claims, bool) {
 
 	return claims, true
 }
-
-// func ParseAndValidateToken(tokenString string) (*models.Claims, bool) {
-// 	// Parse and validate the JWT token
-// 	claims := &models.Claims{}
-// 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-// 		return token, nil
-// 	})
-
-// 	if err != nil || !token.Valid {
-// 		return nil, false
-// 	}
-
-// 	return claims, true
-// }
